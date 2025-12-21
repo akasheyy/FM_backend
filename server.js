@@ -19,7 +19,8 @@ const allowedOrigins = [
   "http://localhost:3003",
   "http://10.0.0.0/16",
   "http://192.168.1.0/24",
-  "http://127.0.0.1"
+  "http://127.0.0.1",
+  "https://fm-admin-panal.vercel.app/"
 ];
 
 app.use(cors({
