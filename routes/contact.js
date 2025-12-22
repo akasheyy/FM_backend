@@ -3,21 +3,26 @@ import {
   createContact,
   listContacts,
   getContact,
-  updateContact
+  updateContact,
+  deleteContact,
 } from "../controllers/contactController.js";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// User submits contact form
+// PUBLIC — user submits booking
 router.post("/", createContact);
 
-// Admin — list all bookings
-router.get("/", listContacts);
+// ADMIN — list all bookings
+router.get("/", protect, listContacts);
 
-// Admin — view single booking
-router.get("/:id", getContact);
+// ADMIN — view single booking
+router.get("/:id", protect, getContact);
 
-// Admin — update booking status
-router.put("/:id", updateContact);
+// ADMIN — update booking (responded / notes)
+router.put("/:id", protect, updateContact);
+
+// ADMIN — delete booking
+router.delete("/:id", protect, deleteContact);
 
 export default router;

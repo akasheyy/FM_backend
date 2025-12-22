@@ -45,3 +45,20 @@ export const updateContact = async (req, res) => {
   const updated = await Contact.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(updated);
 };
+
+// DELETE booking
+export const deleteContact = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+
+    if (!contact) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    await contact.deleteOne();
+
+    res.json({ message: "Booking deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete booking" });
+  }
+};
