@@ -1,5 +1,4 @@
 import Contact from "../models/Contact.js";
-import { sendEmail } from "../utils/sendEmail.js";
 
 /* ===============================
    CREATE CONTACT (BOOKING)
@@ -33,7 +32,7 @@ export const createContact = async (req, res) => {
       });
     }
 
-    // ✅ Save booking to DB
+    // ✅ Save booking to DB ONLY
     const newEntry = await Contact.create({
       name,
       email,
@@ -44,26 +43,6 @@ export const createContact = async (req, res) => {
       guests,
       message,
     });
-
-    // ✅ Email HTML
-    const messageHtml = `
-      <h2>📩 New Booking Request</h2>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Phone:</strong> ${phone}</p>
-      <p><strong>Place:</strong> ${place}</p>
-      <p><strong>Event Type:</strong> ${eventType}</p>
-      <p><strong>Date:</strong> ${date}</p>
-      <p><strong>Guests:</strong> ${guests}</p>
-      <p><strong>Message:</strong> ${message}</p>
-    `;
-
-    // ✅ Try sending email (DO NOT BLOCK BOOKING)
-    try {
-      await sendEmail("New Booking Request", messageHtml);
-    } catch (emailError) {
-      console.error("⚠️ Email failed, booking saved:", emailError.message);
-    }
 
     return res.status(201).json({
       success: true,
@@ -110,7 +89,7 @@ export const getContact = async (req, res) => {
 };
 
 /* ===============================
-   UPDATE BOOKING (OPTIONAL)
+   UPDATE BOOKING
 ================================ */
 export const updateContact = async (req, res) => {
   try {
