@@ -37,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 // connect db
 connectDB();
 
-// routes
+// routesy
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/menu', menuRoutes);

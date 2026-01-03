@@ -129,3 +129,23 @@ export const deleteContact = async (req, res) => {
     res.status(500).json({ message: "Failed to delete booking" });
   }
 };
+
+
+export const markContactSeen = async (req, res) => {
+  try {
+    const updated = await Contact.findByIdAndUpdate(
+      req.params.id,
+      { isNew: false },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    console.error("❌ MARK SEEN ERROR:", error);
+    res.status(500).json({ message: "Failed to mark booking as seen" });
+  }
+};

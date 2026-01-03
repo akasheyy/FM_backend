@@ -6,14 +6,24 @@ const contactSchema = new mongoose.Schema(
     email: { type: String, required: true },
     phone: { type: String, required: true },
 
-    place: { type: String, required: true },     // ✅ ADD
+    place: { type: String, required: true },
     eventType: { type: String, required: true },
-    date: { type: String, required: true },      // ✅ ADD
+    date: { type: String, required: true },
 
     guests: { type: Number, required: true },
     message: { type: String, required: true },
 
-    responded: { type: Boolean, default: false }
+    // 🔔 NEW BOOKING FLAG (IMPORTANT)
+    isNew: {
+      type: Boolean,
+      default: true,
+    },
+
+    // Optional (future use)
+    responded: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
