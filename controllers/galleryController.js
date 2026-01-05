@@ -1,38 +1,74 @@
-import GalleryImage from '../models/GalleryImage.js';
-import cloudinary from '../config/cloudinary.js';
+import GalleryImage from "../models/GalleryImage.js";
+import cloudinary from "../config/cloudinary.js";
 
+/* ===============================
+   UPLOAD IMAGE
+================================ */
 export const uploadImage = async (req, res) => {
-  if (!req.file) return res.status(400).json({ message: 'No file' });
-  const img = await GalleryImage.create({
-    url: req.file.path,
-    public_id: req.file.filename || req.file.public_id,
-    caption: req.body.caption || ''
-  });
-  res.status(201).json(img);
-};
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
 
-export const listImages = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 0; // 0 → no limit
-  const imgs = await GalleryImage.find()
-    .sort({ createdAt: -1 })
-    .limit(limit);
+    const image = await GalleryImage.create({
+      url: req.file.path,
+      public_id: req.file.public_id, // ✅ FIXED
+      caption: req.body.caption || "Untitled",
+    });
 
-  res.json(imgs);
-};
-
-
-export const deleteImage = async (req, res) => {
-  const img = await GalleryImage.findById(req.params.id);
-  if (!img) return res.status(404).json({ message: 'Not found' });
-
-  // Delete from Cloudinary
-  if (img.public_id) {
-    await cloudinary.uploader.destroy(img.public_id).catch(console.error);
+    res.status(201).json(image);
+  } catch (error) {
+    console.error("Upload image error:", error);
+    res.status(500).json({
+      message: "Failed to upload image",
+    });
   }
-
-  // Delete from MongoDB
-  await img.deleteOne();
-
-  res.json({ message: 'Deleted' });
 };
 
+/* ===============================
+   LIST IMAGES
+================================ */
+export const listImages = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 0;
+
+    const images = await GalleryImage.find()
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    res.status(200).json(images);
+  } catch (error) {
+    console.error("Fetch gallery error:", error);
+    res.status(500).json({
+      message: "Failed to fetch gallery images",
+    });
+  }
+};
+
+/* ===============================
+   DELETE IMAGE
+================================ */
+export const deleteImage = async (req, res) => {
+  try {
+    const image = await GalleryImage.findById(req.params.id);
+
+    if (!image) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    // ✅ Delete from Cloudinary
+    if (image.public_id) {
+      await cloudinary.uploader.destroy(image.public_id);
+    }
+
+    // ✅ Delete from MongoDB
+    await image.deleteOne();
+
+    res.status(200).json({ message: "Image deleted successfully" });
+  } catch (error) {
+    console.error("Delete image error:", error);
+    res.status(500).json({
+      message: "Failed to delete image",
+    });
+  }
+};
